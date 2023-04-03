@@ -2,23 +2,23 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: mongo
-  name: mongodb-service
+    app: mongo-wishlist
+  name: mongodb-wishlist-service
 spec:
   ports:
   - port: 27017
     targetPort: 27017
   selector:
-    app: mongo
+    app: mongo-wishlist
   clusterIP: None
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongo-pv-claim
+  name: mongo-wishlist-pv-claim
   labels:
-    app: mongo
+    app: mongo-wishlist
     tier: database
 spec:
   accessModes:
@@ -31,19 +31,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo
+  name: mongo-wishlist
   labels:
-    app: mongo
+    app: mongo-wishlist
 spec:
   selector:
     matchLabels:
-      app: mongo
+      app: mongo-wishlist
   replicas: 1
   template:
     metadata:
       labels:
-        app: mongo
-      name: mongodb-service
+        app: mongo-wishlist
+      name: mongodb-wishlist-service
 
     spec:
       containers:
@@ -54,21 +54,21 @@ spec:
           - name: MONGO_INITDB_ROOT_USERNAME
             valueFrom:
               secretKeyRef:
-                name: mongo-secret
+                name: mongo-wishlist-secret
                 key: username
           - name: MONGO_INITDB_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: mongo-secret
+                name: mongo-wishlist-secret
                 key: password
 
         ports:
         - containerPort: 27017
-          name: mongo
+          name: mongo-wishlist
         volumeMounts:
-        - name: mongo-persistent-storage
+        - name: mongo-wishlist-persistent-storage
           mountPath: /data/db
       volumes:
-      - name: mongo-persistent-storage
+      - name: mongo-wishlist-persistent-storage
         persistentVolumeClaim:
-          claimName: mongo-pv-claim
+          claimName: mongo-wishlist-pv-claim

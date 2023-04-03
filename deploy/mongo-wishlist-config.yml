@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mongo-conf
+  name: mongo-wishlist-conf
 data:
-  host: mongodb-service
+  host: mongodb-wishlist-service
   database: db-wishlist

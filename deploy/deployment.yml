@@ -36,20 +36,20 @@ spec:
             - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: mongo-secret
+                  name: mongo-wishlist-secret
                   key: username
             - name: MONGO_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mongo-secret
+                  name: mongo-wishlist-secret
                   key: password
             - name: MONGO_DB
               valueFrom:
                 configMapKeyRef:
-                  name: mongo-conf
+                  name: mongo-wishlist-conf
                   key: database
             - name: MONGO_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: mongo-conf
+                  name: mongo-wishlist-conf
                   key: host
