@@ -1,6 +1,8 @@
 package com.raytotti.wishlist.application;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,18 +15,19 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WishlistAddProductRequest {
 
-    @NotNull(message = "{Product.productId.NotNull}")
+    @NotBlank(message = "{Product.productId.NotNull}")
     private String productId;
 
-    @NotNull(message = "{Product.code.NotNull}")
+    @NotBlank(message = "{Product.code.NotNull}")
     private String code;
 
-    @NotNull(message = "{Product.description.NotNull}")
+    @NotBlank(message = "{Product.description.NotNull}")
     private String description;
 
-    @NotNull(message = "{Product.thumbnail.NotNull}")
+    @NotBlank(message = "{Product.thumbnail.NotNull}")
     private String thumbnail;
 
+    @Positive(message = "{Product.price.Positive}")
     @NotNull(message = "{Product.price.NotNull}")
     private BigDecimal price;
 

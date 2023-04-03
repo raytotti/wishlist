@@ -1,9 +1,34 @@
 spring:
+  application:
+    name: wishlist-api
   data:
     mongodb:
       authentication-database: admin
-      password: secret
-      username: mongoadmin
-      database: base-wishlist
+      host: '${MONGO_HOST}'
+      database: ${MONGO_DB}'
       port: 27017
-      host: localhost
+      username: '${MONGO_USERNAME}'
+      password: '${MONGO_PASSWORD}'
+  cloud:
+    kubernetes:
+      secrets:
+        name: mongo-secret
+      config:
+        enabled: true
+        sources:
+          - namespace: default
+            name: mongo-conf
+      reload:
+        enabled: true
+        mode: polling
+        period: 1000
+management:
+  endpoint:
+    restart:
+      enabled: true
+    health:
+      enabled: true
+    info:
+      enabled: true
+
+

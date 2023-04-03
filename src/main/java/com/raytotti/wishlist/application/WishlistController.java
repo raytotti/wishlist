@@ -42,7 +42,7 @@ public class WishlistController {
             log.info("WishlistController -> addProduct: Produto adicionado a Wishlist com id {}.", wishlist.getId());
         } else {
             wishlist = Wishlist.of(clientId, request);
-            log.info("WishlistController -> addProduct: Nova Wishlist criada com id . {}", wishlist.getId());
+            log.info("WishlistController -> addProduct: Nova Wishlist criada para o cliente com id {}.", clientId);
         }
 
         wishlist = this.repository.save(wishlist);
