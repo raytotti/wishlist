@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.raytotti'
-version = '0.0.2-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '17'
 
 configurations {
