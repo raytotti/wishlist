@@ -39,12 +39,6 @@ public class WishlistController {
     public ResponseEntity<WishlistResponse> addProduct(@PathVariable String clientId, @RequestBody @Valid WishlistAddProductRequest request) {
         log.info("WishlistController -> addProduct: Solicitado a adição do produto com id {} a wishlist do cliente com id {}.", request.getProductId(), clientId);
 
-        boolean existsClientId = clientService.existsClientId(clientId);
-        if (!existsClientId) {
-            log.info("WishlistController -> addProduct: Client com id {} não foi encontrada.", clientId);
-            throw new ClientNotFoundException();
-        }
-
         SimpleProduct productById = productService.getProductById(request.getProductId());
         log.info("WishlistController -> addProduct: Produto encontrado no outro serviço: {}", productById);
 
@@ -55,6 +49,12 @@ public class WishlistController {
             wishlist.addProduct(productById);
             log.info("WishlistController -> addProduct: Produto adicionado a Wishlist com id {}.", wishlist.getId());
         } else {
+            boolean existsClientId = clientService.existsClientId(clientId);
+            if (!existsClientId) {
+                log.info("WishlistController -> addProduct: Client com id {} não foi encontrada.", clientId);
+                throw new ClientNotFoundException();
+            }
+
             wishlist = Wishlist.of(clientId, productById);
             log.info("WishlistController -> addProduct: Nova Wishlist criada para o cliente com id {}.", clientId);
         }
