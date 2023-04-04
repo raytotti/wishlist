@@ -3,6 +3,7 @@ package com.raytotti.wishlist.application;
 import com.raytotti.wishlist.domain.SimpleProduct;
 import com.raytotti.wishlist.domain.Wishlist;
 import com.raytotti.wishlist.domain.WishlistRepository;
+import com.raytotti.wishlist.exception.ClientNotFoundException;
 import com.raytotti.wishlist.exception.WishlistNotFoundException;
 import com.raytotti.wishlist.service.ClientService;
 import com.raytotti.wishlist.service.ProductService;
@@ -109,6 +110,14 @@ class WishlistControllerTest {
         assertEquals(2, Objects.requireNonNull(response.getBody()).getProducts().size());
         assertEquals(CLIENT_ID.toHexString(), Objects.requireNonNull(response.getBody()).getClientId());
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    public void addProduct_client_not_found() {
+        doReturn(Optional.empty()).when(repository).findByClientId(CLIENT_ID);
+        doReturn(false).when(clientService).existsClientId(CLIENT_ID.toHexString());
+
+        assertThrows(ClientNotFoundException.class, () -> wishlistController.addProduct(CLIENT_ID.toHexString(), REQUEST));
     }
 
     @Test

@@ -10,4 +10,9 @@ class WishlistApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	public void mainTest() {
+		WishlistApplication.main(new String[] {});
+	}
+
 }

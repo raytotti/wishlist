@@ -6,6 +6,9 @@ import com.raytotti.wishlist.exception.ProductNotFoundException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -32,6 +35,13 @@ class WishlistTest {
             PRICE
     );
 
+    @Test
+    public void test_constructor_is_private() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Constructor<Wishlist> constructor = Wishlist.class.getDeclaredConstructor();
+        assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+        constructor.setAccessible(true);
+        constructor.newInstance();
+    }
 
     @Test
     void addProduct() {

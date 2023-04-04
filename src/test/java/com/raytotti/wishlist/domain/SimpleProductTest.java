@@ -3,12 +3,16 @@ package com.raytotti.wishlist.domain;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimpleProductTest {
 
@@ -17,6 +21,14 @@ class SimpleProductTest {
     private final String DESCRIPTION = "Product Description";
     private final String THUMBNAIL = "Image URL";
     private final BigDecimal PRICE = BigDecimal.TEN;
+
+    @Test
+    public void test_constructor_is_private() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Constructor<SimpleProduct> constructor = SimpleProduct.class.getDeclaredConstructor();
+        assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+        constructor.setAccessible(true);
+        constructor.newInstance();
+    }
 
     @Test
     void of() {
