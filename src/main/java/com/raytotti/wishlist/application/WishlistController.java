@@ -1,8 +1,12 @@
 package com.raytotti.wishlist.application;
 
+import com.raytotti.wishlist.domain.SimpleProduct;
 import com.raytotti.wishlist.domain.Wishlist;
 import com.raytotti.wishlist.domain.WishlistRepository;
+import com.raytotti.wishlist.exception.ClientNotFoundException;
 import com.raytotti.wishlist.exception.WishlistNotFoundException;
+import com.raytotti.wishlist.service.ClientService;
+import com.raytotti.wishlist.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,20 +32,30 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 public class WishlistController {
 
     private final WishlistRepository repository;
+    private final ClientService clientService;
+    private final ProductService productService;
 
     @PostMapping(path = "/clients/{clientId}/products")
     public ResponseEntity<WishlistResponse> addProduct(@PathVariable String clientId, @RequestBody @Valid WishlistAddProductRequest request) {
         log.info("WishlistController -> addProduct: Solicitado a adição do produto com id {} a wishlist do cliente com id {}.", request.getProductId(), clientId);
 
-        Optional<Wishlist> optionalWishlist = this.repository.findByClientId(new ObjectId(clientId));
+        boolean existsClientId = clientService.existsClientId(clientId);
+        if (!existsClientId) {
+            log.info("WishlistController -> addProduct: Client com id {} não foi encontrada.", clientId);
+            throw new ClientNotFoundException();
+        }
+
+        SimpleProduct productById = productService.getProductById(request.getProductId());
+        log.info("WishlistController -> addProduct: Produto encontrado no outro serviço: {}", productById);
 
         Wishlist wishlist;
+        Optional<Wishlist> optionalWishlist = this.repository.findByClientId(new ObjectId(clientId));
         if (optionalWishlist.isPresent()) {
             wishlist = optionalWishlist.get();
-            wishlist.addProduct(request);
+            wishlist.addProduct(productById);
             log.info("WishlistController -> addProduct: Produto adicionado a Wishlist com id {}.", wishlist.getId());
         } else {
-            wishlist = Wishlist.of(clientId, request);
+            wishlist = Wishlist.of(clientId, productById);
             log.info("WishlistController -> addProduct: Nova Wishlist criada para o cliente com id {}.", clientId);
         }
 
@@ -72,7 +86,7 @@ public class WishlistController {
         wishlist.removeProduct(productId);
         log.info("WishlistController -> removeProduct: Produto com id {} removido.", productId);
 
-        if(wishlist.getProducts().isEmpty()){
+        if (wishlist.getProducts().isEmpty()) {
             this.repository.deleteById(wishlist.getId());
             log.info("WishlistController -> removeProduct: A Wishlist do cliente com id {} ficou sem produtos e foi deletada.", wishlist.getClientId());
         } else {
@@ -87,7 +101,7 @@ public class WishlistController {
     public ResponseEntity<Boolean> existsProduct(@PathVariable String clientId, @PathVariable String productId) {
         log.info("WishlistController -> existProduct: Solicitado a verificação de existencia do produto com id {} na wishlist do cliente com id {}.", productId, clientId);
 
-        boolean exists =  repository.existsByClientIdAndProductsId(new ObjectId(clientId), new ObjectId(productId));
+        boolean exists = repository.existsByClientIdAndProductsId(new ObjectId(clientId), new ObjectId(productId));
 
         if (exists) {
             log.info("WishlistController -> existProduct: O produto com id {} foi encontrado.", productId);

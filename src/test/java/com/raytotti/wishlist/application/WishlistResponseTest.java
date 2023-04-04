@@ -15,14 +15,14 @@ class WishlistResponseTest {
     @Test
     void from() {
         String clientId = ObjectId.get().toHexString();
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
+        SimpleProduct product = SimpleProduct.of(
                 ObjectId.get().toHexString(),
                 "PRODUCT-CODE",
                 "Product Description",
                 "Image URL",
                 BigDecimal.TEN
         );
-        Wishlist wishlist = Wishlist.of(clientId, request);
+        Wishlist wishlist = Wishlist.of(clientId, product);
 
         WishlistResponse response = WishlistResponse.from(wishlist);
 

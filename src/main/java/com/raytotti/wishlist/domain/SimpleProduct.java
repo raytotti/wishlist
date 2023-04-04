@@ -1,6 +1,5 @@
 package com.raytotti.wishlist.domain;
 
-import com.raytotti.wishlist.application.WishlistAddProductRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,14 +24,18 @@ public class SimpleProduct {
     private String thumbnail;
     private BigDecimal price;
 
-    public static SimpleProduct of(@NotNull final WishlistAddProductRequest request) {
+    public static SimpleProduct of(
+            @NotNull final String id,
+            @NotNull final String code,
+            @NotNull final String description,
+            @NotNull final String thumbnail,
+            @NotNull final BigDecimal price) {
         return new SimpleProduct(
-                Objects.requireNonNull(request.getProductId()),
-                Objects.requireNonNull(request.getCode()),
-                Objects.requireNonNull(request.getDescription()),
-                Objects.requireNonNull(request.getThumbnail()),
-                Objects.requireNonNull(request.getPrice())
-        );
+                Objects.requireNonNull(id),
+                Objects.requireNonNull(code),
+                Objects.requireNonNull(description),
+                Objects.requireNonNull(thumbnail),
+                Objects.requireNonNull(price));
     }
 
     @Override

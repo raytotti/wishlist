@@ -1,6 +1,5 @@
 package com.raytotti.wishlist.domain;
 
-import com.raytotti.wishlist.application.WishlistAddProductRequest;
 import com.raytotti.wishlist.exception.MaxLimitProductException;
 import com.raytotti.wishlist.exception.ProductExistsException;
 import com.raytotti.wishlist.exception.ProductNotFoundException;
@@ -10,7 +9,11 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WishlistTest {
 
@@ -21,7 +24,7 @@ class WishlistTest {
     private final String THUMBNAIL = "Image URL";
     private final BigDecimal PRICE = BigDecimal.TEN;
 
-    private final WishlistAddProductRequest REQUEST = new WishlistAddProductRequest(
+    private final SimpleProduct PRODUCT = SimpleProduct.of(
             PRODUCT_ID,
             CODE,
             DESCRIPTION,
@@ -32,9 +35,9 @@ class WishlistTest {
 
     @Test
     void addProduct() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
         String newProductId = ObjectId.get().toHexString();
-        WishlistAddProductRequest otherProduct = new WishlistAddProductRequest(
+        SimpleProduct otherProduct = SimpleProduct.of(
                 newProductId,
                 CODE,
                 DESCRIPTION,
@@ -50,15 +53,15 @@ class WishlistTest {
 
     @Test
     void addProduct_with_null() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
         assertThrows(NullPointerException.class, () -> wishlist.addProduct(null));
     }
 
     @Test
     void addProduct_max_limit_20() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
         for (int i = 1; i < 20; i++) {
-            WishlistAddProductRequest otherProduct = new WishlistAddProductRequest(
+            SimpleProduct otherProduct = SimpleProduct.of(
                     ObjectId.get().toHexString(),
                     CODE,
                     DESCRIPTION,
@@ -70,7 +73,7 @@ class WishlistTest {
 
         assertEquals(20, wishlist.getProducts().size());
 
-        WishlistAddProductRequest otherProduct = new WishlistAddProductRequest(
+        SimpleProduct otherProduct = SimpleProduct.of(
                 ObjectId.get().toHexString(),
                 CODE,
                 DESCRIPTION,
@@ -82,25 +85,25 @@ class WishlistTest {
 
     @Test
     void addProduct_exists() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        assertThrows(ProductExistsException.class, () -> wishlist.addProduct(REQUEST));
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
+        assertThrows(ProductExistsException.class, () -> wishlist.addProduct(PRODUCT));
     }
 
     @Test
     void removeProduct() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
 
-        wishlist.removeProduct(REQUEST.getProductId());
+        wishlist.removeProduct(PRODUCT.getId());
 
         assertEquals(0, wishlist.getProducts().size());
     }
 
     @Test
     void remove_one_product() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
 
         for (int i = 1; i < 20; i++) {
-            WishlistAddProductRequest otherProduct = new WishlistAddProductRequest(
+            SimpleProduct otherProduct = SimpleProduct.of(
                     ObjectId.get().toHexString(),
                     CODE,
                     DESCRIPTION,
@@ -112,21 +115,21 @@ class WishlistTest {
 
         assertEquals(20, wishlist.getProducts().size());
 
-        wishlist.removeProduct(REQUEST.getProductId());
+        wishlist.removeProduct(PRODUCT.getId());
 
         assertEquals(19, wishlist.getProducts().size());
     }
 
     @Test
     void removeProduct_not_found() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
 
         assertThrows(ProductNotFoundException.class, () -> wishlist.removeProduct(ObjectId.get().toHexString()));
     }
 
     @Test
     void of() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
 
         assertNull(wishlist.getId());
         assertEquals(CLIENT_ID, wishlist.getClientId());
@@ -141,7 +144,7 @@ class WishlistTest {
 
     @Test
     void of_clientId_null() {
-        assertThrows(IllegalArgumentException.class, () -> Wishlist.of(null, REQUEST));
+        assertThrows(IllegalArgumentException.class, () -> Wishlist.of(null, PRODUCT));
     }
 
     @Test
@@ -151,40 +154,40 @@ class WishlistTest {
 
     @Test
     void of_clientId_any() {
-        assertThrows(IllegalArgumentException.class, () -> Wishlist.of("any string", REQUEST));
+        assertThrows(IllegalArgumentException.class, () -> Wishlist.of("any string", PRODUCT));
     }
 
     @Test
     void test_equals() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        Wishlist wishlistEquals = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
+        Wishlist wishlistEquals = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
 
         assertEquals(wishlist, wishlistEquals);
     }
 
     @Test
     void test_not_equals() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        Wishlist wishlistNotEquals = Wishlist.of(ObjectId.get().toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
+        Wishlist wishlistNotEquals = Wishlist.of(ObjectId.get().toHexString(), PRODUCT);
 
         assertNotEquals(wishlist, wishlistNotEquals);
     }
 
     @Test
     void test_not_equals_with_null() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
         assertNotEquals(wishlist, null);
     }
 
     @Test
     void test_not_equals_with_other_object() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
         assertNotEquals(wishlist, new Object());
     }
 
     @Test
     void test_hashCode() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), PRODUCT);
         assertEquals(Objects.hash(CLIENT_ID), wishlist.hashCode());
     }
 }

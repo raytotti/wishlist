@@ -1,6 +1,5 @@
 package com.raytotti.wishlist.domain;
 
-import com.raytotti.wishlist.application.WishlistAddProductRequest;
 import com.raytotti.wishlist.exception.MaxLimitProductException;
 import com.raytotti.wishlist.exception.ProductExistsException;
 import com.raytotti.wishlist.exception.ProductNotFoundException;
@@ -31,14 +30,14 @@ public class Wishlist {
     private ObjectId clientId;
     private Set<SimpleProduct> products = new LinkedHashSet<>();
 
-    public void addProduct(@NotNull final WishlistAddProductRequest request) {
+    public void addProduct(@NotNull final SimpleProduct newProduct) {
         if (this.products.size() == 20) {
             throw new MaxLimitProductException();
         }
-        if (this.products.stream().anyMatch(product -> product.getId().equals(request.getProductId()))) {
+        if (this.products.stream().anyMatch(product -> product.getId().equals(newProduct.getId()))) {
             throw new ProductExistsException();
         }
-        this.products.add(SimpleProduct.of(request));
+        this.products.add(newProduct);
     }
 
     public void removeProduct(@NotNull final String productId) {
@@ -47,11 +46,11 @@ public class Wishlist {
         }
     }
 
-    public static Wishlist of(@NotNull final String clientId, @NotNull final WishlistAddProductRequest request) {
+    public static Wishlist of(@NotNull final String clientId, @NotNull final SimpleProduct product) {
         return new Wishlist(
                 null,
                 new ObjectId(clientId),
-                new LinkedHashSet<>(Collections.singleton(SimpleProduct.of(request)))
+                new LinkedHashSet<>(Collections.singleton(Objects.requireNonNull(product)))
         );
     }
 

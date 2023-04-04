@@ -1,6 +1,5 @@
 package com.raytotti.wishlist.domain;
 
-import com.raytotti.wishlist.application.WishlistAddProductRequest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
@@ -21,13 +20,12 @@ class SimpleProductTest {
 
     @Test
     void of() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        SimpleProduct simpleProduct = SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
-                PRICE);
-        SimpleProduct simpleProduct = SimpleProduct.of(request);
+                PRICE
+        );
 
         assertEquals(PRODUCT_ID, simpleProduct.getId());
         assertEquals(CODE, simpleProduct.getCode());
@@ -38,142 +36,118 @@ class SimpleProductTest {
 
     @Test
     void of_with_null() {
-        //noinspection DataFlowIssue
-        assertThrows(NullPointerException.class, () -> SimpleProduct.of(null));
+        assertThrows(NullPointerException.class, () -> SimpleProduct.of(null, null, null, null, null));
     }
 
     @Test
     void of_with_product_id_null() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                null,
+        assertThrows(NullPointerException.class, () -> SimpleProduct.of(null,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
-                PRICE);
-
-        assertThrows(NullPointerException.class, () -> SimpleProduct.of(request));
+                PRICE));
     }
 
     @Test
     void of_with_code_null() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        assertThrows(NullPointerException.class, () -> SimpleProduct.of(PRODUCT_ID,
                 null,
                 DESCRIPTION,
                 THUMBNAIL,
-                PRICE);
-
-        assertThrows(NullPointerException.class, () -> SimpleProduct.of(request));
+                PRICE));
     }
 
     @Test
     void of_with_description_null() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        assertThrows(NullPointerException.class, () -> SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 null,
                 THUMBNAIL,
-                PRICE);
-
-        assertThrows(NullPointerException.class, () -> SimpleProduct.of(request));
+                PRICE));
     }
 
     @Test
     void of_with_thumbnail_null() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        assertThrows(NullPointerException.class, () -> SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 null,
-                PRICE);
-
-        assertThrows(NullPointerException.class, () -> SimpleProduct.of(request));
+                PRICE));
     }
 
     @Test
     void of_with_price_null() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        assertThrows(NullPointerException.class, () -> SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
-                null);
-
-        assertThrows(NullPointerException.class, () -> SimpleProduct.of(request));
+                null));
     }
 
 
     @Test
     void test_equals() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        SimpleProduct simpleProduct = SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE);
-        SimpleProduct simpleProduct = SimpleProduct.of(request);
 
-        SimpleProduct simpleProductEqual = SimpleProduct.of(request);
+        SimpleProduct simpleProductEqual = SimpleProduct.of(PRODUCT_ID,
+                CODE,
+                DESCRIPTION,
+                THUMBNAIL,
+                PRICE);
 
         assertEquals(simpleProduct, simpleProductEqual);
     }
 
     @Test
     void test_not_equals() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        SimpleProduct simpleProduct = SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE);
-        SimpleProduct simpleProduct = SimpleProduct.of(request);
 
-        WishlistAddProductRequest requestNotEquals = new WishlistAddProductRequest(
-                ObjectId.get().toHexString(),
+        SimpleProduct simpleProductNotEquals = SimpleProduct.of(ObjectId.get().toHexString(),
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE);
-        SimpleProduct simpleProductNotEquals = SimpleProduct.of(requestNotEquals);
 
         assertNotEquals(simpleProduct, simpleProductNotEquals);
     }
 
     @Test
     void test_not_equals_with_null() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        SimpleProduct simpleProduct = SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE);
-        SimpleProduct simpleProduct = SimpleProduct.of(request);
 
         assertNotEquals(simpleProduct, null);
     }
 
     @Test
     void test_not_equals_with_other_object() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        SimpleProduct simpleProduct = SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE);
-        SimpleProduct simpleProduct = SimpleProduct.of(request);
 
         assertNotEquals(simpleProduct, new Object());
     }
 
     @Test
     void test_hashCode() {
-        WishlistAddProductRequest request = new WishlistAddProductRequest(
-                PRODUCT_ID,
+        SimpleProduct simpleProduct = SimpleProduct.of(PRODUCT_ID,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE);
-        SimpleProduct simpleProduct = SimpleProduct.of(request);
 
         assertEquals(Objects.hash(PRODUCT_ID), simpleProduct.hashCode());
     }

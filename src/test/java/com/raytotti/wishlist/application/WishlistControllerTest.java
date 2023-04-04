@@ -1,8 +1,11 @@
 package com.raytotti.wishlist.application;
 
+import com.raytotti.wishlist.domain.SimpleProduct;
 import com.raytotti.wishlist.domain.Wishlist;
 import com.raytotti.wishlist.domain.WishlistRepository;
 import com.raytotti.wishlist.exception.WishlistNotFoundException;
+import com.raytotti.wishlist.service.ClientService;
+import com.raytotti.wishlist.service.ProductService;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,23 +36,30 @@ class WishlistControllerTest {
     private final String DESCRIPTION = "Product Description";
     private final String THUMBNAIL = "Image URL";
     private final BigDecimal PRICE = BigDecimal.TEN;
-    private final WishlistAddProductRequest REQUEST = new WishlistAddProductRequest(
+    private final WishlistAddProductRequest REQUEST = new WishlistAddProductRequest(PRODUCT_ID);
+    private final SimpleProduct SIMPLE_PRODUCT = SimpleProduct.of(
             PRODUCT_ID,
             CODE,
             DESCRIPTION,
             THUMBNAIL,
             PRICE
     );
+
     @Mock
-    private Wishlist wishlistMock = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+    private Wishlist wishlistMock = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
     @Mock
     private WishlistRepository repository;
+    @Mock
+    private ClientService clientService;
+    @Mock
+    private ProductService productService;
     private WishlistController wishlistController;
 
     @BeforeEach
     public void setUp() {
         openMocks(this);
-        wishlistController = new WishlistController(repository);
+        wishlistController = new WishlistController(repository, clientService, productService);
+
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/api/v1/wishlists");
         ServletRequestAttributes attrs = new ServletRequestAttributes(mockRequest);
@@ -58,10 +68,12 @@ class WishlistControllerTest {
 
     @Test
     public void addProduct_first_product() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
 
         doReturn(Optional.empty()).when(repository).findByClientId(CLIENT_ID);
         doReturn(wishlist).when(repository).save(wishlist);
+        doReturn(true).when(clientService).existsClientId(CLIENT_ID.toHexString());
+        doReturn(SIMPLE_PRODUCT).when(productService).getProductById(PRODUCT_ID);
 
         ResponseEntity<WishlistResponse> response = wishlistController.addProduct(CLIENT_ID.toHexString(), REQUEST);
 
@@ -73,21 +85,25 @@ class WishlistControllerTest {
 
     @Test
     public void addProduct_more_than_one() {
-        Wishlist wishlistFind = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        doReturn(Optional.of(wishlistFind)).when(repository).findByClientId(CLIENT_ID);
+        Wishlist wishlistFind = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
 
-        Wishlist wishlistSave = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        WishlistAddProductRequest otherRequest = new WishlistAddProductRequest(
-                ObjectId.get().toHexString(),
+        Wishlist wishlistSave = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
+        String otherProductId = ObjectId.get().toHexString();
+        SimpleProduct otherProduct = SimpleProduct.of(
+                otherProductId,
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE
         );
-        wishlistSave.addProduct(otherRequest);
-        doReturn(wishlistSave).when(repository).save(wishlistSave);
+        wishlistSave.addProduct(otherProduct);
 
-        ResponseEntity<WishlistResponse> response = wishlistController.addProduct(CLIENT_ID.toHexString(), otherRequest);
+        doReturn(Optional.of(wishlistFind)).when(repository).findByClientId(CLIENT_ID);
+        doReturn(wishlistSave).when(repository).save(wishlistSave);
+        doReturn(true).when(clientService).existsClientId(CLIENT_ID.toHexString());
+        doReturn(otherProduct).when(productService).getProductById(otherProductId);
+
+        ResponseEntity<WishlistResponse> response = wishlistController.addProduct(CLIENT_ID.toHexString(), new WishlistAddProductRequest(otherProductId));
 
         assertNotNull(response.getHeaders().get("location"));
         assertEquals(2, Objects.requireNonNull(response.getBody()).getProducts().size());
@@ -97,19 +113,19 @@ class WishlistControllerTest {
 
     @Test
     public void removeProduct_one_product() {
-        WishlistAddProductRequest otherRequest = new WishlistAddProductRequest(
+        SimpleProduct otherProduct = SimpleProduct.of(
                 ObjectId.get().toHexString(),
                 CODE,
                 DESCRIPTION,
                 THUMBNAIL,
                 PRICE
         );
-        Wishlist wishlistFind = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        wishlistFind.addProduct(otherRequest);
+        Wishlist wishlistFind = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
+        wishlistFind.addProduct(otherProduct);
         doReturn(Optional.of(wishlistFind)).when(repository).findByClientId(CLIENT_ID);
 
-        Wishlist wishlistSave = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
-        wishlistSave.addProduct(otherRequest);
+        Wishlist wishlistSave = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
+        wishlistSave.addProduct(otherProduct);
         wishlistSave.removeProduct(PRODUCT_ID);
         doReturn(wishlistSave).when(repository).save(wishlistSave);
 
@@ -167,7 +183,7 @@ class WishlistControllerTest {
 
     @Test
     public void findByClientId_found() {
-        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), REQUEST);
+        Wishlist wishlist = Wishlist.of(CLIENT_ID.toHexString(), SIMPLE_PRODUCT);
 
         doReturn(Optional.of(wishlist)).when(repository).findByClientId(CLIENT_ID);
 

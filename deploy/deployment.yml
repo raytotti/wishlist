@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: wishlist-api
-          image: wishlist-api:1.0
+          image: wishlist-api:2.0
           imagePullPolicy: Never
           ports:
           - containerPort: 8080
@@ -53,3 +53,18 @@ spec:
                 configMapKeyRef:
                   name: mongo-wishlist-conf
                   key: host
+            - name: API_SUPPORT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: wishlist-conf
+                  key: api-support-url
+            - name: API_SUPPORT_GET_EXISTS_CLIENT
+              valueFrom:
+                configMapKeyRef:
+                  name: wishlist-conf
+                  key: get-exists-client
+            - name: API_SUPPORT_GET_PRODUCT
+              valueFrom:
+                configMapKeyRef:
+                  name: wishlist-conf
+                  key: get-product
