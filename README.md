@@ -1,6 +1,8 @@
 # Wishlist Microservice API
+
 This microservice is responsible for managing an e-commerce Wishlist. It is built using Java 17, Spring Boot, Gradle and MongoDB, and is designed to be deployed using Kubernetes.
-This project uses another microservices to query product information and check for existing customers. At [the address](https://github.com/raytotti/wishlist-support) you will find an example microservices that provides the end-points with the necessary information for the correct functioning of this project.
+
+This project uses another microservices to query product information and check for existing customers. [The Project Wishlist Support API](https://github.com/raytotti/wishlist-support) you will find an example microservices that provides the end-points with the necessary information for the correct functioning of this project.
 
 ## Requirements
 
@@ -102,7 +104,7 @@ curl --location --request DELETE 'http://<applicationUrl>:<applicationPort>/api/
 ```shell
 curl --location --request GET 'http://<applicationUrl>:<applicationPort>/api/v1/wishlists/clients/<clientId>'
 ```
-* **GET /api/v1/wishlists/clients/{clientId}/products/{productId}** - Checks if the informed product belongs to the list of product items for the informed clientId.
+* **GET /api/v1/wishlists/clients/{clientId}/products/{productId}/exists** - Checks if the informed product belongs to the list of product items for the informed clientId.
 ```shell
 curl --location --request GET 'http://<applicationUrl>:<applicationPort>/api/v1/wishlists/clients/<clientId>/products/<productId>/exists'
 ```
