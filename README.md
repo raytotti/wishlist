@@ -109,3 +109,6 @@ curl --location --request GET 'http://<applicationUrl>:<applicationPort>/api/v1/
 
 ## Conclusion
 This microservice provides a simple and scalable solution for managing an e-commerce Wishlist. By leveraging Java 17, Spring Boot, Gradle, and MongoDB, and deploying with Kubernetes, this microservice is well-equipped to handle large volumes of traffic and provide a seamless user experience.
+
+## TODO
+* As a future implementation, we are going to implement the communication of this microservice with a messaging structure. with the intention of ensuring the integrity of product and customer data.
