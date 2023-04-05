@@ -30,7 +30,8 @@ management:
       enabled: true
     info:
       enabled: true
-wishlist-support:
-  url: ${API_SUPPORT_URL}
-  get-exists-client: ${API_SUPPORT_GET_EXISTS_CLIENT}
-  get-product: ${API_SUPPORT_GET_PRODUCT}
+external-api:
+  url-client: ${API_CLIENT_URL}
+  get-exists: ${API_CLIENT_GET_EXISTS}
+  url-product: ${API_PRODUCT_URL}
+  get-product: ${API_PRODUCT_GET_PRODUCT}

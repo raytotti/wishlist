@@ -53,18 +53,23 @@ spec:
                 configMapKeyRef:
                   name: mongo-wishlist-conf
                   key: host
-            - name: API_SUPPORT_URL
+            - name: API_CLIENT_URL
               valueFrom:
                 configMapKeyRef:
                   name: wishlist-conf
-                  key: api-support-url
-            - name: API_SUPPORT_GET_EXISTS_CLIENT
+                  key: external-api-url-client
+            - name: API_CLIENT_GET_EXISTS
               valueFrom:
                 configMapKeyRef:
                   name: wishlist-conf
-                  key: get-exists-client
-            - name: API_SUPPORT_GET_PRODUCT
+                  key: external-api-get-exists
+            - name: API_PRODUCT_URL
               valueFrom:
                 configMapKeyRef:
                   name: wishlist-conf
-                  key: get-product
+                  key: external-api-url-product
+            - name: API_PRODUCT_GET_PRODUCT
+              valueFrom:
+                configMapKeyRef:
+                  name: wishlist-conf
+                  key: external-api-get-product

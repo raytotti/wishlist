@@ -19,8 +19,8 @@ public class ClientServiceImpl implements ClientService {
     private final String GET_URI;
 
     public ClientServiceImpl(RestTemplate restTemplate,
-                             @Value("${wishlist-support.url}") String URL,
-                             @Value("${wishlist-support.get-exists-client}") String GET_URI) {
+                             @Value("${external-api.url-client}") String URL,
+                             @Value("${external-api.get-exists}") String GET_URI) {
         this.restTemplate = restTemplate;
         this.URL = URL;
         this.GET_URI = GET_URI;

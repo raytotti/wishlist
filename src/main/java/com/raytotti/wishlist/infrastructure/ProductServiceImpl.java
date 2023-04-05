@@ -20,8 +20,8 @@ public class ProductServiceImpl implements ProductService {
     private final String GET_URI;
 
     public ProductServiceImpl(RestTemplate restTemplate,
-                              @Value("${wishlist-support.url}") String URL,
-                              @Value("${wishlist-support.get-product}") String GET_URI) {
+                              @Value("${external-api.url-product}") String URL,
+                              @Value("${external-api.get-product}") String GET_URI) {
         this.restTemplate = restTemplate;
         this.URL = URL;
         this.GET_URI = GET_URI;

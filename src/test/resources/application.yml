@@ -7,7 +7,8 @@ spring:
       database: db-wishlist-test
       port: 27017
       host: localhost
-wishlist-support:
-  url: http://wishlist-support-api:8080
-  get-exists-client: /api/v1/clients/{id}/exists
+external-api:
+  url-client: http://wishlist-support-api:8080
+  get-exists: /api/v1/clients/{id}/exists
+  url-product: http://wishlist-support-api:8080
   get-product: /api/v1/products

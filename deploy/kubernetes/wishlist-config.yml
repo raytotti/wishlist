@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: wishlist-conf
 data:
-  api-support-url: http://wishlist-support-api:8080
-  get-exists-client: /api/v1/clients/{id}/exists
-  get-product: /api/v1/products
+  external-api-url-client: http://wishlist-support-api:8080
+  external-api-get-exists: /api/v1/clients/{id}/exists
+  external-api-url-product: http://wishlist-support-api:8080
+  external-api-get-product: /api/v1/products
