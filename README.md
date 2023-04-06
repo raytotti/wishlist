@@ -86,6 +86,10 @@ Deploy in your Kubernetes cluster following these steps:
    ```
    
 ## Endpoints
+One of the options is to use the Swagger that is configured in the application at path `/swagger-ui.html`
+
+![Swagger](docs/swagger.png)
+
 The following endpoints are available in the microservice:
 
 * **POST /api/v1/wishlists/clients/{clientId}/products** - Add a new item to the list of product items for the informed clientId.
