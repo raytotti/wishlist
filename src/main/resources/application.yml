@@ -22,7 +22,13 @@ spring:
         enabled: true
         mode: polling
         period: 1000
-management:
+spring-doc:
+  packagesToScan: com.raytotti.wishlist
+  version: "1.0.0"
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
   endpoint:
     restart:
       enabled: true

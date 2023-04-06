@@ -7,6 +7,11 @@ import com.raytotti.wishlist.exception.ClientNotFoundException;
 import com.raytotti.wishlist.exception.WishlistNotFoundException;
 import com.raytotti.wishlist.service.ClientService;
 import com.raytotti.wishlist.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +34,7 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "/api/v1/wishlists")
+@Tag(name = "Wishlist", description = "Wishlist API Operations")
 public class WishlistController {
 
     private final WishlistRepository repository;
@@ -36,6 +42,16 @@ public class WishlistController {
     private final ProductService productService;
 
     @PostMapping(path = "/clients/{clientId}/products")
+    @Operation(summary = "Add a new item to the list of product items for the informed clientId.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Operation completed successfully."),
+            @ApiResponse(responseCode = "400", description = "Failed to validate! Request Invalid.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Failed to validate! Product or Client not found.", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Failed to validate! Product already exists.", content = @Content),
+            @ApiResponse(responseCode = "413", description = "Failed to validate! Maximum 20 products allowed per customer.", content = @Content),
+            @ApiResponse(responseCode = "415", description = "Unsupported Content Type.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Unexpected system failure.", content = @Content)
+    })
     public ResponseEntity<WishlistResponse> addProduct(@PathVariable String clientId, @RequestBody @Valid WishlistAddProductRequest request) {
         log.info("WishlistController -> addProduct: Solicitado a adição do produto com id {} a wishlist do cliente com id {}.", request.getProductId(), clientId);
 
@@ -73,6 +89,13 @@ public class WishlistController {
     }
 
     @DeleteMapping(path = "/clients/{clientId}/products/{productId}")
+    @Operation(summary = "Remove an item from the list of product items for the informed clientId.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Operation completed successfully."),
+            @ApiResponse(responseCode = "400", description = "Failed to validate! Request Invalid.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Failed to validate! Wishlist or Product not found.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Unexpected system failure.", content = @Content)
+    })
     public ResponseEntity<Void> removeProduct(@PathVariable String clientId, @PathVariable String productId) {
         log.info("WishlistController -> removeProduct: Solicitado a remoção do produto com id {} na wishlist do cliente com id {}.", productId, clientId);
 
@@ -98,6 +121,13 @@ public class WishlistController {
     }
 
     @GetMapping(path = "/clients/{clientId}/products/{productId}/exists")
+    @Operation(summary = "Checks if the informed product belongs to the list of product items for the informed clientId.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation completed successfully."),
+            @ApiResponse(responseCode = "400", description = "Failed to validate! Request Invalid.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Failed to validate! Wishlist or Product not found.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Unexpected system failure.", content = @Content)
+    })
     public ResponseEntity<Boolean> existsProduct(@PathVariable String clientId, @PathVariable String productId) {
         log.info("WishlistController -> existProduct: Solicitado a verificação de existencia do produto com id {} na wishlist do cliente com id {}.", productId, clientId);
 
@@ -113,6 +143,13 @@ public class WishlistController {
     }
 
     @GetMapping(path = "/clients/{clientId}")
+    @Operation(summary = "Retrieve the list of favorite items for the informed clientId.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operation completed successfully."),
+            @ApiResponse(responseCode = "400", description = "Failed to validate! Request Invalid.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Failed to validate! Wishlist not found.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Unexpected system failure.", content = @Content)
+    })
     public ResponseEntity<WishlistResponse> findByClientId(@PathVariable String clientId) {
         log.info("WishlistController -> findByClientId: Solicitado a busca da Wishlist do cliente com id {}.", clientId);
 
