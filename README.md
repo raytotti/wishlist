@@ -86,7 +86,7 @@ Deploy in your Kubernetes cluster following these steps:
    ```
    
 ## Endpoints
-One of the options is to use the Swagger that is configured in the application at path `/swagger-ui.html`
+One of the options is to use the Swagger that is configured in the application at path `/swagger-ui/index.html`
 
 ![Swagger](docs/swagger.png)
 
